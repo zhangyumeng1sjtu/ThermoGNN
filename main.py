@@ -126,7 +126,7 @@ def run_case_study(model, task, graph_dir, weight_dir, fold=5, visualize=False):
 
 def main():
     parser = argparse.ArgumentParser(description='ThermoGNN: predict thermodynamics stability')
-    parser.add_argument('--batch_size', type=int, default=128,
+    parser.add_argument('--batch-size', type=int, dest='batch_size', default=128,
                         help='input batch size for training (default: 128)')
     parser.add_argument('--epochs', type=int, default=100,
                         help='number of epochs to train (default: 100)')
@@ -134,25 +134,25 @@ def main():
                         help='learning rate (default: 0.001)')
     parser.add_argument('--decay', type=float, default=0.0001,
                         help='weight decay (default: 0.0001)')
-    parser.add_argument('--warm_steps', type=int, default=10,
+    parser.add_argument('--warm-steps', type=int, dest='warm_steps', default=10,
                         help='number of warm start steps for learning rate (default: 10)')
     parser.add_argument('--patience', type=int, default=10,
                         help='patience for early stopping (default: 10)')
     parser.add_argument('--loss', type=str, default='mse',
                         help='loss function (mse, logcosh, wmse)')
-    parser.add_argument('--num_layer', type=int, default=2,
+    parser.add_argument('--num-layer', type=int, dest='num_layer', default=2,
                         help='number of GNN message passing layers (default: 2)')
-    parser.add_argument('--emb_dim', type=int, default=200,
+    parser.add_argument('--emb-dim', type=int, dest='emb_dim', default=200,
                         help='embedding dimensions (default: 200)')
-    parser.add_argument('--dropout_ratio', type=float, default=0.3,
+    parser.add_argument('--dropout-ratio', type=float, dest='dropout_ratio', default=0.3,
                         help='dropout ratio (default: 0.3)')
-    parser.add_argument('--graph_pooling', type=str, default="mean",
+    parser.add_argument('--graph-pooling', type=str, dest='graph_pooling', default="mean",
                         help='graph level pooling (sum, mean, max, attention)')
-    parser.add_argument('--graph_dir', type=str, default='data/graphs',
+    parser.add_argument('--graph-dir', type=str,dest='graph_dir', default='data/graphs',
                         help='directory storing graphs data')
-    parser.add_argument('--logging_dir', type=str, default='./',
+    parser.add_argument('--logging-dir', type=str, dest='logging_dir', default='./',
                         help='logging directory (default: \'./\')')
-    parser.add_argument('--gnn_type', type=str, default="gin",
+    parser.add_argument('--gnn-type', type=str, dest='gnn_type', default="gin",
                         help='gnn type (gin, gcn, gat, graphsage)')
     parser.add_argument('--split', type=int, default=10,
                         help="Split k fold in cross validation (default: 10)")

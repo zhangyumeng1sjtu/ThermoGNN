@@ -66,9 +66,9 @@ def get_node_feature(nodes_list, profile, scoring, aa_features, chain):
 
     for node in nodes_list:
         res = chain[int(node)]
-        data = list(profile[res_list.index(res)]) # positional encoding
-        score = list(scoring[res_list.index(res)]) # rosetta scoring function
-        aa_feature = aa_features[three_to_one(res.get_resname())] # sequence encoding
+        data = list(profile[res_list.index(res)])   # positional encoding
+        score = list(scoring[res_list.index(res)])  # rosetta scoring function
+        aa_feature = aa_features[three_to_one(res.get_resname())]   # sequence encoding
         features.append(data + score + aa_feature)
 
     return features
