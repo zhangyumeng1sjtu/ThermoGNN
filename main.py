@@ -116,8 +116,7 @@ def run_case_study(model, task, graph_dir, weight_dir, fold=5, visualize=False):
         ax3.grid(ls='--', alpha=0.2, linewidth=0.5)
 
         plt.tight_layout()
-        
-        # wandb.log({"chart": plt})
+
         img = wandb.Image(fig)
         wandb.log({"chart": img})
 
@@ -241,17 +240,13 @@ def main():
             train_rev_pcc, train_rev_rmse = evaluate(model, train_reverse_loader, device)
             valid_dir_pcc, valid_dir_rmse = evaluate(model, valid_direct_loader, device)
             valid_rev_pcc, valid_rev_rmse = evaluate(model, valid_reverse_loader, device)
-            test_dir_pcc, test_dir_rmse = evaluate(model, test_direct_loader, device)
-            test_rev_pcc, test_rev_rmse = evaluate(model, test_reverse_loader, device)
 
             logging.info(f'Epoch: {epoch:03d}, Train Loss: {train_loss:.3f}, Valid Loss: {valid_loss:.3f}')
             logging.info(f'Train Direct PCC: {train_dir_pcc:.3f}, Train Direct RMSE: {train_dir_rmse:.3f},'
                          f' Train Reverse PCC: {train_rev_pcc:.3f}, Train Reverse RMSE: {train_rev_rmse:.3f}')
             logging.info(f'Valid Direct PCC: {valid_dir_pcc:.3f}, Valid Direct RMSE: {valid_dir_rmse:.3f},'
                          f' Valid Reverse PCC: {valid_rev_pcc:.3f}, Valid Reverse RMSE: {valid_rev_rmse:.3f}')
-            logging.info(f'Test Direct PCC: {test_dir_pcc:.3f}, Test Direct RMSE: {test_dir_rmse:.3f},'
-                         f' Test Reverse PCC: {test_rev_pcc:.3f}, Test Reverse RMSE: {test_rev_rmse:.3f}')
-            
+
             if args.visualize:
                 wandb.init(project="ThermoGNN", group=args.logging_dir, name=f'{args.logging_dir}_fold_{i+1}', config=args)
                 wandb.log({'Train/Loss': train_loss, 'Valid/Loss': valid_loss}, step=epoch)
@@ -259,8 +254,7 @@ def main():
                            'Train/Reverse PCC': train_rev_pcc, 'Train/Reverse RMSE': train_rev_rmse}, step=epoch)
                 wandb.log({'Valid/Direct PCC': valid_dir_pcc, 'Valid/Direct RMSE': valid_dir_rmse,
                            'Valid/Reverse PCC': valid_rev_pcc, 'Valid/Reverse RMSE': valid_rev_rmse}, step=epoch)
-                wandb.log({'Test/Direct PCC': test_dir_pcc, 'Test/Direct RMSE': test_dir_rmse,
-                           'Test/Reverse PCC': test_rev_pcc, 'Test/Reverse RMSE': test_rev_rmse}, step=epoch)
+
                 
             early_stopping(valid_loss, model, goal="minimize")
 
@@ -275,18 +269,18 @@ def main():
         corr_dir, rmse_dir, corr_rev, rmse_rev, corr_dir_rev, delta = metrics(pred_dir, pred_rev, y_dir, y_rev)
 
         logging.info(f'Fold {i + 1}, Best Valid Loss: {-early_stopping.best_score:.3f}')
-        logging.info(f'Direct PCC: {corr_dir:.3f}, Direct RMSE: {rmse_dir:.3f},'
-                     f' Reverse PCC: {corr_rev:.3f}, Reverse RMSE: {rmse_rev:.3f},'
-                     f' Dir-Rev PCC {corr_dir_rev:.3f}, <Delta>: {delta:.3f}')
+        logging.info(f'Test Direct PCC: {corr_dir:.3f}, Test Direct RMSE: {rmse_dir:.3f},'
+                     f' Test Reverse PCC: {corr_rev:.3f}, Test Reverse RMSE: {rmse_rev:.3f},'
+                     f' Test Dir-Rev PCC {corr_dir_rev:.3f}, Test <Delta>: {delta:.3f}')
 
         if args.visualize:
-            wandb.run.summary['Best Valid Loss'] = -early_stopping.best_score
-            wandb.run.summary['Direct PCC'] = corr_dir
-            wandb.run.summary['Direct RMSE'] = rmse_dir
-            wandb.run.summary['Reverse PCC'] = corr_rev
-            wandb.run.summary['Reverse RMSE'] = rmse_rev
-            wandb.run.summary['Dir-Rev PCC'] = corr_dir_rev
-            wandb.run.summary['<Delta>'] = delta
+            wandb.run.summary['Valid/Best Valid Loss'] = -early_stopping.best_score
+            wandb.run.summary['Test/Direct PCC'] = corr_dir
+            wandb.run.summary['Test/Direct RMSE'] = rmse_dir
+            wandb.run.summary['Test/Reverse PCC'] = corr_rev
+            wandb.run.summary['Test/Reverse RMSE'] = rmse_rev
+            wandb.run.summary['Test/Dir-Rev PCC'] = corr_dir_rev
+            wandb.run.summary['Test/<Delta>'] = delta
 
             wandb.join()
 
